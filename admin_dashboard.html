@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imperial Prints - Admin Dashboard</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Work+Sans:400,900,800,500,700,600);
+
+        *, *::after, *::before {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-size: 6px;
+            background: #fbfbfb;
+            padding: 8px 8px;
+            font-family: 'Work Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+        }
+
+        @media (min-width: 860px) {
+            html, body {
+                font-size: 8px;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            html, body {
+                font-size: 10px;
+            }
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+
+        .logo {
+            /* background: #E34D67; */
+            color: #f5bdc5;
+            padding: 1rem 2rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            /* box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.1); */
+            border-radius: 0.3rem;
+            text-align: center;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            max-width: 180rem;
+            min-width: 480px;
+            background: #fff;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 0 35px 20px #DDE5EE;
+        }
+
+        .slider {
+            position: relative;
+            height: 70rem;
+            padding: 5rem 0;
+        }
+
+        .slider::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .slide-wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide-navigation__squares {
+            width: 2%;
+            position: relative;
+            float: left;
+            overflow: hidden;
+        }
+
+        .slide-navigation__txt {
+            width: 1%;
+            position: relative;
+            float: left;
+            overflow: hidden;
+        }
+
+        .slide-navigation__squares::after, .slide-navigation__txt::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .slide-navigation__txt {
+            display: block;
+            height: 90%;
+        }
+
+        .slide-navigation__txt ul {
+            margin: 0;
+            list-style: none;
+            padding: 0;
+            position: absolute;
+            display: table-cell;
+            width: 27rem;
+            transform: rotate(90deg);
+            transform-origin: 0;
+            margin-left: calc(65% - 0.14rem);
+        }
+
+        .slide-navigation__txt ul::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .slide-navigation__txt li {
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            margin: 0 1.0rem;
+            position: relative;
+            float: left;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #A1A5B8;
+        }
+
+        .slide-navigation__txt li span {
+            cursor: pointer;
+            transition: all 0.5s ease;
+            display: block;
+        }
+
+        .slide-navigation__txt li span.active {
+            transform: scale(1.1, 1.1);
+            color: #E34D67;
+        }
+
+        .slide-navigation__squares {
+            display: block;
+            height: 100%;
+        }
+
+        .squares-wrapper {
+            position: absolute;
+            margin-left: calc(50% - 0.4rem);
+            bottom: 5rem;
+            height: 4.6rem;
+            overflow: hidden;
+        }
+
+        .squares-slider {
+            position: relative;
+            display: block;
+            margin-top: -2.5rem;
+            transform: translateY(-2.5rem);
+        }
+
+        .square {
+            width: 0.6rem;
+            height: 0.6rem;
+            display: block;
+            margin: 1.3rem 0;
+            background: #A1A5B8;
+        }
+
+        .square.red {
+            background: #E34D67;
+        }
+
+        .slides-container {
+            position: relative;
+            width: 95%;
+            float: left;
+            height: 105%;
+        }
+
+        .grid-container {
+            overflow-y: auto;
+            height: 100%;
+            width: 100%;
+            padding: 2rem;
+            position: absolute;
+            display: block;
+        }
+
+        .row {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            padding: 0 4px;
+        }
+
+        .column {
+            -ms-flex: 25%;
+            flex: 25%;
+            max-width: 25%;
+            padding: 0 4px;
+        }
+
+        .column img {
+            margin-top: 8px;
+            vertical-align: middle;
+            width: 100%;
+        }
+
+        .column {
+            position: relative; /* Added for positioning the overlay */
+        }
+
+        .product-img {
+            transition: .5s ease; /* Added for smooth transition */
+        }
+
+        .product-img:hover {
+            opacity: 0.3;
+        }
+
+        .product-img:hover .middle {
+            opacity: 1;
+        }
+
+        .middle {
+            transition: .5s ease;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%; /* Added for proper width */
+        }
+
+        .text {
+            border: none;
+            background-color: #f16363;
+            color: white;
+            font-size: 1.6rem; /* Adjusted font size */
+            padding: 1rem 2rem; /* Adjusted padding */
+            cursor: pointer;
+            border-radius: 0.4rem; /* Added rounded corners */
+        }
+
+        .product-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s ease;
+    }
+
+    .product-card:hover img {
+      opacity: 0.5;
+    }
+
+    .product-card:hover .product-info {
+      opacity: 1;
+    }
+
+    .product-info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(220, 246, 255, 0.7);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .product-info h3 {
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: rgb(26, 25, 25);
+    }
+
+    .product-info p {
+      font-weight: 300;
+      margin-bottom: 10px;
+      color: rgb(0, 0, 0);
+    }
+
+    .view-art {
+    background: none;
+    border: 2px solid rgb(255, 104, 104);
+    color: rgb(248, 93, 93);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+
+    .view-art:hover {
+        background-color: rgb(255, 111, 111);
+        color: rgb(255, 255, 255);
+    }
+
+        @media screen and (max-width: 800px) {
+            .column {
+                -ms-flex: 50%;
+                flex: 50%;
+                max-width: 50%;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .column {
+                -ms-flex: 100%;
+                flex: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="slider-wrapper"> -->
+        <div class="logo-container">
+            <div class="logo" onclick="window.location.href='index.html'">Imperial Prints</div>
+        </div>
+        <div class="slider">
+            <div class="slide-navigation__squares">
+                <div class="squares-wrapper">
+                    <div class="squares-slider">
+                        <span class="square"></span>
+                        <span class="square"></span>
+                        <span class="square red"></span>
+                        <span class="square"></span>
+                        <span class="square"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="slides-container">
+                <div class="slide-wrapper">
+                    <div class="grid-container" data-order="1">
+                        <div class="row"> 
+                            <div class="column">
+                                <div class="product-card">
+                                    <img src="assets/img1.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img10.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img11.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img12.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img13.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img14.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img15.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="product-card">
+                                    <img src="assets/img16.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img17.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img18.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img19.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img20.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img21.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img22.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="product-card">
+                                    <img src="assets/img2.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img3.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img4.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img5.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img6.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img7.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img8.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="product-card">
+                                    <img src="assets/img8.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img11.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img21.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img6.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img4.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img5.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <img src="assets/img7.jpg" alt="Artwork 1">
+                                    <div class="product-info">
+                                      <h3>Artwork 1</h3>
+                                      <p>Artist: John Doe</p>
+                                      <p>Price: £150</p>
+                                      <button class="view-art" onclick="window.location.href = 'view.html';">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-navigation__txt">
+                <ul>
+                    <li><span data-order="1" onclick="window.location.href='admin_dashboard.html'">all</span></li>
+                    <li><span data-order="2" onclick="window.location.href='addart.html'">add</span></li>
+                    <li><span data-order="3" onclick="window.location.href='removeart.html'">remove</span></li>
+                    <li><span onclick="window.location.href='index.html'">logout</span></li>
+                </ul>
+            </div>
+        </div>
+
+    <!-- </div> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script>
+        var initialSlide = $('.slides-container [data-order="1"]');
+        var initalSelected = $('.slide-navigation__txt [data-order="1"]');
+        var mq_medium = window.matchMedia('(min-width: 860px)');
+        var mq_big = window.matchMedia('(min-width: 1200px)');
+
+        function activate_slide(order) {
+            var unactiveSlide = $('.slide.active');
+            var activeSlide = $('.slides-container [data-order="' + order + '"]');
+
+            if (!(activeSlide.hasClass('active'))) {
+                slide_in(activeSlide);
+                slide_out(unactiveSlide);
+            }
+        }
+
+        function slide_in(slide) {
+            var _this = slide;
+            animation_in(slide);
+            _this.addClass('active');
+            gsap.to(_this, { duration: 1, autoAlpha: 1 });
+        }
+
+        function slide_out(slide) {
+            var _this = slide;
+            _this.css('z-index', '2');
+            _this.removeClass('active');
+            
+            gsap.to(_this, { 
+                duration: 1, 
+                autoAlpha: 0, 
+                onComplete: function() {
+                    _this.css('z-index', '1');
+                }
+            });
+
+            animation_out(slide);
+        }
+
+        function animation_in(slide) {
+            var title = slide.find('h1');
+            var subtitle = $(slide).find('h2');
+            var text = $(slide).find('p');
+            var button = $(slide).find('button');
+            var image = $(slide).find('img');
+
+            gsap.fromTo(title, 
+                { autoAlpha: 0, x: 100 }, 
+                { duration: 0.6, autoAlpha: 0.6, x: 0, ease: "power2.out" }
+            );
+            
+            gsap.fromTo(subtitle, 
+                { autoAlpha: 0, x: -200 }, 
+                { duration: 0.5, autoAlpha: 1, x: 0, ease: "power2.out", delay: -0.1 }
+            );
+            
+            gsap.fromTo(text, 
+                { autoAlpha: 0, x: 50 }, 
+                { duration: 0.8, autoAlpha: 1, x: 0, ease: "power2.out" }
+            );
+            
+            gsap.fromTo(button, 
+                { autoAlpha: 0 }, 
+                { duration: 0.5, autoAlpha: 1 }
+            );
+            
+            gsap.to(image, 
+                { duration: 0, autoAlpha: 1, scale: 1 }
+            );
+        }
+
+        function animation_out(slide) {
+            var title = slide.find('h1');
+            var subtitle = $(slide).find('h2');
+            var text = $(slide).find('p');
+            var button = $(slide).find('button');
+            var image = $(slide).find('img');
+
+            gsap.to(title, { duration: 0.6, autoAlpha: 0, x: 0 });
+            gsap.to(subtitle, { duration: 0.5, autoAlpha: 0, x: 200 });
+            gsap.to(text, { duration: 0.5, autoAlpha: 0 });
+            gsap.to(button, { duration: 0.5, autoAlpha: 0 });
+            gsap.to(image, { duration: 1, scale: 1.1 });
+        }
+
+        $('.slide-navigation__txt span').on('click', function() {
+            var _this = $(this);
+            var order = _this.data('order');
+            var spans = $('.slide-navigation__txt span');
+            var current = $('.slide.active').data('order');
+
+            spans.removeClass('active');
+            _this.addClass('active');
+            activate_slide(order);
+            stagger_squares(order, current);
+        });
+
+        function stagger_squares(order, current) {
+            var mq = 0.7;
+            var moveY;
+            var squares = $('.slide-navigation__squares .square');
+            var staggerTime = -0.12;
+
+            if (order < current) {
+                staggerTime = staggerTime * -1;
+            }
+
+            if (mq_medium.matches) { mq = 1; }
+            if (mq_big.matches) { mq = 1.3; }
+
+            moveY = (order - 1) * (15 * mq);
+            
+            gsap.to(squares, {
+                duration: 0.1, 
+                y: moveY, 
+                stagger: staggerTime
+            });
+        }
+
+        $(document).ready(function() {
+            initialSlide.addClass('active');
+            initalSelected.addClass('active');
+            gsap.to(initialSlide, { duration: 0.5, autoAlpha: 1 });
+        });
+    </script>
+</body>
+</html>
